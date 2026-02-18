@@ -1,7 +1,7 @@
 const Student = require('../models/Student');
 const jwt = require('jsonwebtoken');
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
     try{
         const { name, email, password, age, course } = req.body;
 
@@ -9,8 +9,6 @@ exports.register = async (req, res) => {
         if(existingUser) {
             return res.status(400).json({ message: 'Email already in use' });
         }
-
-        console.log('Creating student with data:', { name, email, password, age, course });
 
         const student = new Student({
             name, 
@@ -22,15 +20,13 @@ exports.register = async (req, res) => {
 
         await student.save();
 
-        console.log('Student created:', student);
-
         res.status(201).json({ message: 'User registered successfully', student });
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     try{
         const {email, password} = req.body;
 
@@ -55,6 +51,6 @@ exports.login = async (req, res) => {
 
         res.status(200).json({ message: 'Login successful', token });
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }

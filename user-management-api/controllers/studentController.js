@@ -1,22 +1,22 @@
 const Student = require('../models/Student');
 
 // Admin only - get all students
-exports.getAllStudents = async (req,res) => {
+exports.getAllStudents = async (req,res, next) => {
     try{
         if(req.user.role !== 'admin') {
             return res.status(403).json({ message: "Forbidden! You don't have permission to access this resource." });
         }
 
-        const students = await Student.find({role: "student"}).select('-password');
+        const students = await Student.find({role: "student"})
         res.status(200).json(students);
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }
 
-exports.getStudent = async (req, res) => {
+exports.getStudent = async (req, res, next) => {
     try{
-        const student = await Student.findById(req.params.id).select('-password');
+        const student = await Student.findById(req.params.id)
         
         if(!student) {
             return res.status(404).json({ message: "Student not found!" });
@@ -24,11 +24,11 @@ exports.getStudent = async (req, res) => {
 
         res.status(200).json(student);
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }
 
-exports.updateStudent = async (req, res) => {
+exports.updateStudent = async (req, res, next) => {
     try{
         const studentId = req.params.id;
         const { name, email, age, course } = req.body;
@@ -41,12 +41,12 @@ exports.updateStudent = async (req, res) => {
 
         res.status(200).json(student);
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }
 
 // Admin only - delete a student
-exports.deleteStudent = async (req, res) => {
+exports.deleteStudent = async (req, res, next) => {
     try {
         if(req.user.role !== 'admin') {
             return res.status(403).json({ message: "Forbidden! You don't have permission to access this resource." });
@@ -56,6 +56,6 @@ exports.deleteStudent = async (req, res) => {
         await Student.findByIdAndDelete(studentId);
         res.status(200).json({ message: "Student deleted successfully!" });
     }catch(err){
-        res.status(500).json({ message: err.message });
+        next(err)
     }
 }
