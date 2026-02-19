@@ -24,9 +24,9 @@ const studentSchema = new mongoose.Schema({
             validator: function (value) {
                 return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
             },
-            message: "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character"
-        },
-        select: false
+            message: "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+            select: false
+        }
     },
     age:{
         type: Number,

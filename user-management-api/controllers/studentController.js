@@ -7,8 +7,28 @@ exports.getAllStudents = async (req,res, next) => {
             return res.status(403).json({ message: "Forbidden! You don't have permission to access this resource." });
         }
 
-        const students = await Student.find({role: "student"})
-        res.status(200).json(students);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const skipValue = (page - 1) * limit;
+
+        const students = await Student.find({role: "student"}).sort({age: 1}).skip(skipValue).limit(limit);
+
+        const result = await Student.aggregate([
+            {
+                $group: {
+                    _id: "$course",
+                    sumOfAge: {
+                        $sum: "$age"
+                    }
+                }
+            }
+        ])
+        
+        res.status(200).json({
+            students,
+            averageAgeByCourse: result
+        });
     }catch(err){
         next(err)
     }

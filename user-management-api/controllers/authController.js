@@ -30,7 +30,7 @@ exports.login = async (req, res, next) => {
     try{
         const {email, password} = req.body;
 
-        const student = await Student.findOne({ email });
+        const student = await Student.findOne({ email }).select('+password');
         if(!student) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
