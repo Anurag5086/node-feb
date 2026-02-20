@@ -3,6 +3,19 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 const app = express();
+
+// Serve EJS views from ./views
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+// Serve static files from ./public (create if you want styles.css there)
+app.use(express.static(__dirname + '/public'));
+
+// Route to render the chat page
+app.get('/', (req, res) => {
+    res.render('index');
+});
+
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -26,6 +39,6 @@ io.on('connection', (socket) => {
     })
 })
 
-server.listen(3000, () => {
-    console.log("Server is running on port 3000");
+server.listen(3001, () => {
+    console.log("Server is running on port 3001");
 })
