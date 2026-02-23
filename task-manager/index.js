@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
+const taskRoutes = require('./routes/taskRoutes');
 
 const app = express();
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+app.use('/api', taskRoutes);
 
 mongoose.connect(process.env.MONGODB_URI)
         .then(() => console.log('Connected to MongoDB'))
