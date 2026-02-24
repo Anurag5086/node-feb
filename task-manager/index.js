@@ -5,8 +5,8 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 // const mongoSanitize = require('express-mongo-sanitize');
 // const xssClean = require('xss-clean');
-const csurf = require('csurf');
-const cookieParser = require('cookie-parser');
+// const csurf = require('csurf');
+// const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const taskRoutes = require('./routes/taskRoutes');
 
@@ -29,8 +29,8 @@ app.use(cors(
 app.use(limiter)
 // app.use(mongoSanitize());
 // app.use(xssClean());
-app.use(cookieParser());
-app.use(csurf({ cookie: true }));
+// app.use(cookieParser());
+// app.use(csurf({ cookie: true }));
 app.use('/uploads', express.static('uploads'));
 app.use('/api', taskRoutes);
 
