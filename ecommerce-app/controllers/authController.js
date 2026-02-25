@@ -21,7 +21,7 @@ exports.register = async (req, res, next) => {
 
         await user.save();
 
-        res.status(201).json({ message: 'User registered successfully', student });
+        res.status(201).json({ message: 'User registered successfully', user });
     }catch(err){
         next(err)
     }
@@ -44,7 +44,7 @@ exports.login = async (req, res, next) => {
         const token = jwt.sign(
             {
                 id: user._id,
-                role: user.role
+                isAdmin: user.isAdmin
             },
             process.env.JWT_SECRET,
             { expiresIn: '1h'}
