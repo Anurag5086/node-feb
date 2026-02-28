@@ -1,0 +1,184 @@
+:root {
+	--bg-gradient-1: linear-gradient(135deg, #f6f8ff 0%, #eef6ff 50%, #fef9fb 100%);
+	--card-bg: rgba(255, 255, 255, 0.72);
+	--glass-border: rgba(255, 255, 255, 0.6);
+	--accent: #5a67d8; /* indigo */
+	--muted: #6b7280;
+	--success: #16a34a;
+	--warning: #eab308;
+	--danger: #ef4444;
+}
+
+/* Page background and main container */
+body {
+	background: var(--bg-gradient-1);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.orders-container {
+	max-width: 1100px;
+	margin: 36px auto;
+	padding: 28px;
+	box-sizing: border-box;
+}
+
+.orders-container h1 {
+	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	font-weight: 700;
+	color: #0f172a;
+	margin: 0 0 18px 0;
+	letter-spacing: -0.2px;
+	font-size: 28px;
+}
+
+.orders-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 18px;
+}
+
+.order-card {
+	background: var(--card-bg);
+	border: 1px solid var(--glass-border);
+	border-radius: 14px;
+	padding: 18px;
+	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+	transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms;
+	backdrop-filter: blur(6px) saturate(120%);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.order-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+.order-card h3 {
+	margin: 0;
+	color: #0b1220;
+	font-size: 16px;
+}
+
+.order-card p {
+	margin: 6px 0;
+	color: var(--muted);
+	font-size: 14px;
+}
+
+.order-card p strong {
+	color: #071033;
+}
+
+/* Highlight amount */
+.order-card p:nth-child(2) {
+	color: #0b1220;
+	font-weight: 600;
+	font-size: 15px;
+}
+
+/* Payment method */
+.order-card p:nth-child(3) {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Status badge (4th child is the status paragraph in current markup) */
+.order-card .order-status {
+	display: inline-block;
+	padding: 6px 10px;
+	border-radius: 999px;
+	font-weight: 700;
+	color: white;
+	font-size: 12px;
+	width: fit-content;
+}
+
+/* Status color variants (class names generated from status text in JSX)
+	e.g. 'Delivered' -> .delivered, 'Payment Pending' -> .payment-pending
+	The JSX lowers and hyphenates the status (e.g. "Payment Pending" -> "payment-pending"). */
+.order-card .order-status { text-transform: capitalize; background: linear-gradient(90deg, var(--accent), #7c3aed); }
+.order-card .order-status.delivered { background: var(--success); }
+.order-card .order-status.pending { background: var(--warning); color: #071033; }
+.order-card .order-status.payment-pending { background: var(--warning); color: #071033; }
+.order-card .order-status.cancelled { background: var(--danger); }
+.order-card .order-status.processing { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+.order-card .order-status.placed { background: var(--accent); }
+
+/* Ordered products list */
+.ordered-products {
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px dashed rgba(11, 18, 32, 0.06);
+}
+
+.ordered-products h4 {
+	margin: 0 0 8px 0;
+	color: #0b1220;
+	font-size: 14px;
+}
+
+.ordered-product {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 10px;
+	border-radius: 8px;
+	align-items: center;
+	background: linear-gradient(90deg, rgba(90,103,216,0.04), rgba(90,103,216,0.02));
+	margin-bottom: 8px;
+}
+
+.ordered-product p {
+	margin: 0;
+	color: #0b1220;
+	font-size: 14px;
+}
+
+.ordered-product p + p {
+	color: var(--muted);
+	font-size: 13px;
+}
+
+/* Small utility layout for totals and meta */
+.order-meta {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: center;
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+	.orders-container {
+		padding: 18px;
+		margin: 20px 12px;
+	}
+
+	.orders-container h1 {
+		font-size: 22px;
+	}
+
+	.ordered-product {
+		padding: 10px;
+		font-size: 13px;
+	}
+}
+
+/* Accessibility helpers */
+.order-card:focus-within {
+	outline: 2px solid rgba(90, 103, 216, 0.15);
+	outline-offset: 4px;
+}
+
+/* Color-coding statuses via substring matching is not available in CSS; provide common textual heuristics
+   using attribute selectors is impossible here, but the most compatible approach is to set color using
+   the exact visible text if the app inserts predictable status strings. Below are a few common cases.
+   NOTE: These rules rely on the exact content of the paragraph — if your app uses different words,
+   update them or add classes in the JSX. */
+
+/* No textual selectors remain. Status coloring is handled by classes added in JSX. */
+

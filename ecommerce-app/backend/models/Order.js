@@ -33,6 +33,9 @@ const orderSchema = new mongoose.Schema({
         enum: ['Razorpay', 'COD'],
         required: true
     },
+    razorpayPaymentId: {
+        type: String
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);

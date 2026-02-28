@@ -1,15 +1,20 @@
-const e = require('express');
 const Order = require('../models/Order');
 
 // Create a new order
 exports.createOrder = async (req, res) => {
     try {
-        const { products, totalAmount, paymentMethod } = req.body;
+        let { products, totalAmount, paymentMethod, razorpayPaymentId } = req.body;
+
+        if(paymentMethod !== 'Razorpay' && paymentMethod === 'COD'){
+            razorpayPaymentId = null; // Clear Razorpay payment ID for COD orders
+        }
+
         const order = new Order({
             userId: req.user.id,
             products,
             totalAmount,
-            paymentMethod
+            paymentMethod,
+            razorpayPaymentId
         });
         await order.save();
         res.status(201).json(order);
@@ -46,6 +51,18 @@ exports.updateOrderStatus = async (req, res) => {
         if (!order) return res.status(404).json({ message: 'Order not found' });
         res.json(order);
     } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getAllOrdersForAdmin = async (req, res) => {
+    try {
+        if(!req.user.isAdmin){
+            return res.status(403).json({ message: 'Only admins can access all orders' });
+        }
+        const orders = await Order.find().populate('products.productId');
+        res.json(orders);
+    } catch (error) {o
         res.status(500).json({ message: 'Server error' });
     }
 };

@@ -27,7 +27,7 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <h1>Acciozon</h1>
+            {/* <h1>Acciozon</h1> */}
             <h2>Choose from any categories below!</h2>
             <br/>
             <div className="categories-list">
