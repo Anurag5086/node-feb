@@ -1,0 +1,180 @@
+/* ...existing code... */
+
+/* Product cards layout */
+
+.products-container {
+  max-width: 1200px;
+  margin: 28px auto;
+  padding: 0 16px;
+}
+
+.products-container h1 {
+  text-align: left;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+/* Grid: force 3 columns on wide screens, fallback to 2/1 on smaller */
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 cards per row */
+  gap: 20px;
+}
+
+/* Card */
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: 0 8px 20px rgba(18,38,63,0.04);
+  display: flex;
+  flex-direction: column;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  width: 100%;
+}
+
+/* Image on top */
+.product-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Body */
+.product-body {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+.product-title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+/* Rating and reviews row */
+.product-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f59e0b; /* star color */
+  font-size: 0.95rem;
+}
+
+.star {
+  color: #e6e7ea;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 120ms;
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+.rating-value {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Reviews on the right */
+.reviews {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Description */
+.product-desc {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+/* Footer with price and button */
+.product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mrp {
+  color: #6b7280;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+
+.discounted {
+  color: #111827;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Add to cart button */
+.add-to-cart {
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* Hover */
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 42px rgba(18,38,63,0.12);
+}
+
+/* Responsive: 2 columns on medium screens, 1 on small */
+@media (max-width: 992px) {
+  .products-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .products-list {
+    grid-template-columns: 1fr;
+  }
+
+  .product-body {
+    padding: 12px;
+  }
+
+  .rating .star {
+    font-size: 0.95rem;
+  }
+}
+
+/* ...existing code... */

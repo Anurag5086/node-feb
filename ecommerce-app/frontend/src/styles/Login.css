@@ -1,0 +1,117 @@
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --primary:#1976d2;
+  --muted:#6b7280;
+  --radius:10px;
+  --shadow:0 8px 20px rgba(18,38,63,0.08);
+  --gap:14px;
+  --pad:20px;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family:Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background:linear-gradient(180deg,var(--bg),#eef4fb);
+  color:#111827;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* container */
+.login-container{
+  max-width:420px;
+  margin:6vh auto;
+  padding:var(--pad);
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+  border:1px solid rgba(16,24,40,0.04);
+}
+
+/* heading */
+.login-container h2{
+  margin:0;
+  font-size:1.4rem;
+  font-weight:600;
+  text-align:center;
+  color:#0f172a;
+}
+
+/* form layout */
+.login-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:4px;
+}
+
+/* each input group */
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.form-group label{
+  font-size:0.88rem;
+  color:var(--muted);
+}
+
+/* inputs */
+.login-form input[type="email"],
+.login-form input[type="password"]{
+  width:100%;
+  padding:10px 12px;
+  font-size:0.95rem;
+  border:1px solid rgba(15,23,42,0.08);
+  border-radius:8px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  transition:box-shadow .16s ease, border-color .12s ease, transform .06s ease;
+  outline: none;
+}
+
+.login-form input:focus{
+  border-color:rgba(25,118,210,0.9);
+  box-shadow:0 6px 18px rgba(25,118,210,0.12);
+}
+
+/* submit button */
+.login-form button[type="submit"]{
+  margin-top:6px;
+  width:100%;
+  padding:10px 14px;
+  font-size:1rem;
+  font-weight:600;
+  color:#fff;
+  background:var(--primary);
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:transform .08s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow:0 6px 14px rgba(25,118,210,0.18);
+}
+
+.login-form button[type="submit"]:hover{
+  background:#155fa8;
+  transform:translateY(-1px);
+}
+
+.login-form button[type="submit"]:active{
+  transform:translateY(0);
+  box-shadow:none;
+}
+
+/* small helper states */
+.login-form input:invalid{ box-shadow:none; }
+
+/* responsive */
+@media (max-width:420px){
+  .login-container{ margin:4vh 16px; padding:16px;
+    }
+}
