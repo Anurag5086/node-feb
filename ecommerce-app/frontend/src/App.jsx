@@ -23,13 +23,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/products" element={<Products />} />
-          {/* <Route path="/products/:id" element={<ProductDetails />} /> */}
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/admin" element={<AdminDashboard  />} />
           <Route path="/admin/categories" element={<AdminCategory  />} />
           <Route path="/admin/products" element={<AdminProducts  />} />
-          {/* <Route path="/checkout" element={<Checkout />} /> */}
         </Routes>
       </div>
     </BrowserRouter>
