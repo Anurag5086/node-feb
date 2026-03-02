@@ -32,10 +32,11 @@ if (process.env.NODE_ENV === 'production') {
     const clientBuildPath = path.join(__dirname, '..', 'frontend', 'dist');
     app.use(express.static(clientBuildPath));
 
-    // Catch-all: send index.html so React Router can handle client-side routing
-    app.get('*', (req, res) => {
-        // If request starts with /api, don't serve index.html
-        if (req.path.startsWith('/api')) return res.status(404).end();
+    // Catch-all middleware: send index.html so React Router can handle client-side routing
+    // Use a middleware instead of a route pattern to avoid path-to-regexp parsing issues
+    app.use((req, res, next) => {
+        // If request starts with /api, pass through to API routes
+        if (req.path.startsWith('/api')) return next();
         res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
 }
