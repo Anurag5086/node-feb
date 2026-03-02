@@ -57,12 +57,22 @@ exports.updateOrderStatus = async (req, res) => {
 
 exports.getAllOrdersForAdmin = async (req, res) => {
     try {
+
+        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+
         if(!req.user.isAdmin){
             return res.status(403).json({ message: 'Only admins can access all orders' });
         }
-        const orders = await Order.find().populate('products.productId');
-        res.json(orders);
-    } catch (error) {o
-        res.status(500).json({ message: 'Server error' });
+
+        const skipValue = (page - 1) * limit;
+
+        const orders = await Order.find().populate('products.productId').skip(skipValue).limit(limit).sort({ createdAt: -1 });
+        res.json({
+            orders,
+            totalPages: Math.ceil(await Order.countDocuments() / limit)
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
     }
 };

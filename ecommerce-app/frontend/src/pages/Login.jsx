@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/Login.css';
 import axios from 'axios';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 const Login = () => {
 
@@ -58,6 +59,7 @@ const Login = () => {
                 </div>
                 <button type="submit">Login</button>
             </form>
+            <GoogleLoginButton />
         </div>
     );
 }

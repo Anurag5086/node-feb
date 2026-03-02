@@ -17,20 +17,26 @@ const AdminDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState({});
     const [updating, setUpdating] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(null);
+    const LIMIT = 5;
 
     const fetchOrders = () => {
-        axios.get(`http://localhost:3000/api/orders/admin/orders`, {
+        axios.get(`http://localhost:3000/api/orders/admin/orders?page=${currentPage}&limit=${LIMIT}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
         })
         .then(response => {
-            console.log("Fetched orders for admin:", response.data);
-            setOrders(response.data);
+            let ordersData = response.data.orders;
+            let pages = response.data.totalPages
+
+            setOrders(ordersData);
             // initialize selectedStatus map from fetched orders
             const map = {};
-            response.data.forEach(o => map[o._id] = o.status || 'Pending');
+            (ordersData || []).forEach(o => map[o._id] = o.status || 'Pending');
             setSelectedStatus(map);
+            setTotalPages(pages);
         })
         .catch(error => {
             console.error("There was an error fetching orders for admin!", error);
@@ -39,7 +45,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
         // Redirect non-admin users away
@@ -57,7 +63,7 @@ const AdminDashboard = () => {
         const status = selectedStatus[orderId];
         if(!status) return;
         setUpdating(prev => ({ ...prev, [orderId]: true }));
-        axios.put(`http://localhost:3000/api/orders/${orderId}`, { status }, {
+        axios.put(`http://localhost:3000/api/orders/${orderId}?page=${currentPage}&limit=5`, { status }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         })
         .then(response => {
@@ -70,6 +76,48 @@ const AdminDashboard = () => {
             alert('Failed to update order status. See console for details.');
         })
         .finally(() => setUpdating(prev => ({ ...prev, [orderId]: false })));
+    }
+
+    const goToPage = (page) => {
+        if (page < 1) return;
+        if (totalPages && page > totalPages) return;
+        setCurrentPage(page);
+    }
+
+    const renderPagination = () => {
+        if (!totalPages || totalPages <= 1) return null;
+        const pages = [];
+        // show up to 7 page buttons centered around currentPage
+        const maxButtons = 7;
+        let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let end = start + maxButtons - 1;
+        if (end > totalPages) {
+            end = totalPages;
+            start = Math.max(1, end - maxButtons + 1);
+        }
+        for (let p = start; p <= end; p++) pages.push(p);
+
+        return (
+            <div className="pagination-container">
+                <button className="page-btn" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>Prev</button>
+                {start > 1 && (
+                    <>
+                        <button className="page-btn" onClick={() => goToPage(1)}>1</button>
+                        {start > 2 && <span className="dots">...</span>}
+                    </>
+                )}
+                {pages.map(p => (
+                    <button key={p} className={`page-btn ${p === currentPage ? 'active' : ''}`} onClick={() => goToPage(p)}>{p}</button>
+                ))}
+                {end < totalPages && (
+                    <>
+                        {end < totalPages - 1 && <span className="dots">...</span>}
+                        <button className="page-btn" onClick={() => goToPage(totalPages)}>{totalPages}</button>
+                    </>
+                )}
+                <button className="page-btn" onClick={() => goToPage(currentPage + 1)} disabled={totalPages && currentPage === totalPages}>Next</button>
+            </div>
+        );
     }
 
     return (
@@ -130,6 +178,7 @@ const AdminDashboard = () => {
                     </tbody>
                 </table>
             </div>
+            {renderPagination()}
         </div>
     );
 }

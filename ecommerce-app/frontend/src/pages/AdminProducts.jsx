@@ -10,7 +10,8 @@ const AdminProducts = () => {
 	const [mrpPrice, setMrpPrice] = useState('')
 	const [discountedPrice, setDiscountedPrice] = useState('')
 	const [inStock, setInStock] = useState(true)
-	const [images, setImages] = useState('') // comma separated URLs
+	// images will hold an array of File objects selected by the user
+	const [images, setImages] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [products, setProducts] = useState([])
 
@@ -46,39 +47,60 @@ const AdminProducts = () => {
 		fetchProducts(id)
 	}
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
 		if(!title.trim() || !description.trim() || !mrpPrice || !discountedPrice || !selectedCategory) {
 			return alert('Please fill required fields: title, description, mrpPrice, discountedPrice and category')
 		}
-		const body = {
-			title: title.trim(),
-			description: description.trim(),
-			mrpPrice: parseFloat(mrpPrice),
-			discountedPrice: parseFloat(discountedPrice),
-			categoryId: selectedCategory,
-			inStock,
-			images: images.split(',').map(s => s.trim()).filter(Boolean)
-		}
 		setLoading(true)
-		axios.post('http://localhost:3000/api/products/create', body, {
-			headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-		})
-		.then(res => {
+		try {
+			// Determine images array: if user selected File objects, upload them to Cloudinary
+			let imageUrls = []
+			if (Array.isArray(images) && images.length > 0) {
+				// upload all files in parallel
+				const uploadToCloudinary = async (file) => {
+					const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'your-cloud-name'
+					const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'your-upload-preset'
+					const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
+					const formData = new FormData()
+					formData.append('file', file)
+					formData.append('upload_preset', uploadPreset)
+					const res = await axios.post(url, formData)
+					return res.data.secure_url || res.data.url
+				}
+
+				imageUrls = await Promise.all(images.map(f => uploadToCloudinary(f)))
+			} else if (typeof images === 'string' && images.trim()) {
+				imageUrls = images.split(',').map(s => s.trim()).filter(Boolean)
+			}
+
+			const body = {
+				title: title.trim(),
+				description: description.trim(),
+				mrpPrice: parseFloat(mrpPrice),
+				discountedPrice: parseFloat(discountedPrice),
+				categoryId: selectedCategory,
+				inStock,
+				images: imageUrls
+			}
+
+			const res = await axios.post('http://localhost:3000/api/products/create', body, {
+				headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+			})
 			alert('Product created')
 			setTitle('')
 			setDescription('')
 			setMrpPrice('')
 			setDiscountedPrice('')
-			setImages('')
+			setImages([])
 			fetchProducts(selectedCategory)
-		})
-		.catch(err => {
+		} catch (err) {
 			console.error('Create product failed', err)
-			const msg = err?.response?.data?.message || 'Failed to create product'
+			const msg = err?.response?.data?.message || err.message || 'Failed to create product'
 			alert(msg)
-		})
-		.finally(() => setLoading(false))
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	return (
@@ -125,8 +147,8 @@ const AdminProducts = () => {
 							<label className="form-check-label" htmlFor="inStock">In Stock</label>
 						</div>
 						<div className="mb-3">
-							<label className="form-label">Images (comma separated URLs)</label>
-							<input value={images} onChange={e => setImages(e.target.value)} className="form-control" />
+							<label className="form-label">Images (you can select multiple files)</label>
+							<input type='file' multiple accept="image/*" onChange={e => setImages(Array.from(e.target.files || []))} className="form-control" />
 						</div>
 						<button className="btn btn-primary" type="submit" disabled={loading}>{loading ? 'Saving...' : 'Create Product'}</button>
 					</form>
